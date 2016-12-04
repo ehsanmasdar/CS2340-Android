@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Water Reporting System</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+
+    <string name="text_login">Login</string>
+    <string name="text_login_quote">\“All our dreams can come true, if we have the courage to pursue them.\”</string>
+    <string name="text_login_quote_author">-Walt Disney</string>
+    <string name="hint_login_username">Username</string>
+    <string name="hint_login_password">Password</string>
+    <string name="button_login">Login</string>
+    <string name="text_login_instructions">Log in with the credentials you use to sign into my.austinisd.org.</string>
+    <string name="hint_login_id">Student ID</string>
+
+</resources>
