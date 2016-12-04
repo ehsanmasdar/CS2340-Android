@@ -1,6 +1,9 @@
 package com.ehsandev.cs2340.activity;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
@@ -16,10 +19,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.ehsandev.cs2340.R;
-import com.ehsandev.cs2340.fragment.MapFragment;
+import com.ehsandev.cs2340.adapters.MarkerAdapter;
+import com.ehsandev.cs2340.fragment.QualityReportFragment;
+import com.ehsandev.cs2340.fragment.SourceReportFragment;
+import com.ehsandev.cs2340.model.Response;
+import com.ehsandev.cs2340.model.SourceReport;
+import com.ehsandev.cs2340.task.SourceReportTask;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, SourceReportTask.AsyncTaskCompleteListener {
+    private GoogleMap googleMap;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,15 +40,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -45,7 +49,25 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        onNavigationItemSelected(navigationView.getMenu().getItem(0));
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                if (sp.getInt("fragment", 0) == 1){
+                    Intent i = new Intent(getApplicationContext(), SourceReportCreateActivity.class);
+                    startActivity(i);
+                }
+                else if (sp.getInt("fragment", 0) == 2){
+                    Intent i = new Intent(getApplicationContext(), QualityReportCreateActivity.class);
+                    startActivity(i);
+                }
+
+            }
+        });
+        fab.setVisibility(View.INVISIBLE);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        onNavigationItemSelected(navigationView.getMenu().getItem(sp.getInt("fragment", 0)));
     }
 
     @Override
@@ -61,7 +83,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -72,10 +93,6 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -83,27 +100,65 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor e = sp.edit();
         // Handle navigation view item clicks here.
         FragmentManager fragmentManager = getSupportFragmentManager();
         int id = item.getItemId();
-
+        item.setChecked(true);
         if (id == R.id.nav_map)  {
-            MapFragment mapFragment = new MapFragment();
+            setTitle("Map");
+            e.putInt("fragment", 0);
+            fab.setVisibility(View.INVISIBLE);
+            SupportMapFragment mapFragment = new SupportMapFragment();
+            mapFragment.getMapAsync(this);
             fragmentManager.beginTransaction().replace(R.id.content_frame, mapFragment).commit();
         } else if (id == R.id.nav_source) {
-
+            setTitle("Source Reports");
+            e.putInt("fragment", 1);
+            fab.setVisibility(View.VISIBLE);
+            SourceReportFragment sourceFragment = new SourceReportFragment();
+            fragmentManager.beginTransaction().replace(R.id.content_frame, sourceFragment).commit();
         } else if (id == R.id.nav_quality) {
-
+            e.putInt("fragment", 2);
+            fab.setVisibility(View.VISIBLE);
+            QualityReportFragment qualityReportFragment = new QualityReportFragment();
+            fragmentManager.beginTransaction().replace(R.id.content_frame, qualityReportFragment).commit();
         } else if (id == R.id.nav_graph) {
+            e.putInt("fragment", 3);
+            fab.setVisibility(View.INVISIBLE);
 
         } else if (id == R.id.nav_profile) {
+            fab.setVisibility(View.INVISIBLE);
 
         } else if (id == R.id.nav_logout) {
-
+            fab.setVisibility(View.INVISIBLE);
         }
-
+        e.commit();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        this.googleMap = googleMap;
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        new SourceReportTask(this,this).execute(sp.getString("cookie", null));
+    }
+
+    @Override
+    public void onGotData(Response<SourceReport[]> s) {
+
+        if (s.getSuccess() == 1){
+            MarkerAdapter m = new MarkerAdapter(s.getData(), this);
+            googleMap.setInfoWindowAdapter(m);
+            for (SourceReport report : s.getData()){
+                googleMap.addMarker(report.getMarker());
+            }
+        }
+        else {
+            Log.d("debug", "failed to get source reports...");
+        }
     }
 }

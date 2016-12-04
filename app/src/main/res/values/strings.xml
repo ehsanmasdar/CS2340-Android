@@ -15,5 +15,9 @@
     <string name="button_login">Login</string>
     <string name="text_login_instructions">Log in with the credentials you use to sign into my.austinisd.org.</string>
     <string name="hint_login_id">Student ID</string>
-
+    <string name="title_source_report_view">Source Report</string>
+    <string name="title_source_report_create">Create a Source Report</string>
+    <string name="action_submit">Submit Report</string>
+    <string name="title_quality_report_create">Create a Quality Report</string>
+    <string name="title_quality_report_view">Quality Report</string>
 </resources>

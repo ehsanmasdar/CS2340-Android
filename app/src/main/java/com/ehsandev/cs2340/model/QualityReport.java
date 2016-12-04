@@ -1,6 +1,8 @@
 package com.ehsandev.cs2340.model;
 
-public class PurityReport {
+import java.io.Serializable;
+
+public class QualityReport implements Serializable {
     private String name;
     private double lat;
     private double lon;
@@ -74,7 +76,7 @@ public class PurityReport {
         this.contaminant = contaminant;
     }
 
-    public PurityReport(String name, double lat, double lon, String condition, int virus, int contaminant, String id, String date) {
+    public QualityReport(String name, double lat, double lon, String condition, int virus, int contaminant, String id, String date) {
         this.name = name;
         this.lat = lat;
         this.lon = lon;
@@ -85,7 +87,7 @@ public class PurityReport {
         this.contaminant = contaminant;
     }
 
-    public PurityReport(String name, double lat, double lon, String condition, int virus, int contaminant) {
+    public QualityReport(String name, double lat, double lon, String condition, int virus, int contaminant) {
         this.name = name;
         this.lat = lat;
         this.lon = lon;

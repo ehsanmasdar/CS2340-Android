@@ -24,11 +24,11 @@ public class LoginActivity extends AppCompatActivity implements LoginTask.AsyncT
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(this);
-//        if (p.contains("cookie")){
-//            Intent intent = new Intent(this, MainActivity.class);
-//            startActivity(intent);
-//            finish();
-//        }
+        if (p.contains("cookie")){
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
     public void onLoginClick(View v) {

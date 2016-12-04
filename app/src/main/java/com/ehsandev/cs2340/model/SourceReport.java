@@ -1,7 +1,12 @@
 package com.ehsandev.cs2340.model;
 
 
-public class SourceReport {
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.io.Serializable;
+
+public class SourceReport implements Serializable {
     public String getName() {
         return name;
     }
@@ -83,7 +88,9 @@ public class SourceReport {
         this.id = id;
         this.date = date;
     }
-
+    public MarkerOptions getMarker(){
+        return new MarkerOptions().position(new LatLng(lat,lon)).title(id);
+    }
     @Override
     public String toString(){
          return "Submitted by: " + name + "; " +
