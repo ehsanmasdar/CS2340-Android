@@ -2,7 +2,9 @@ package com.ehsandev.cs2340.task;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 
 import com.ehsandev.cs2340.api.UserHandler;
 import com.ehsandev.cs2340.model.Response;
@@ -30,6 +32,13 @@ public class LoginTask extends AsyncTask<User, Response<String>, Response<String
     @Override
     protected Response doInBackground(User... user) {
         Response<String> r = UserHandler.postLogin(user[0]);
+        if (r.getSuccess() == 1){
+            Response<User> userInfo = UserHandler.getUser(r.getData());
+            SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor e = p.edit();
+            e.putString("level", userInfo.getData().getLevel().toString());
+            e.commit();
+        }
         return r;
     }
 

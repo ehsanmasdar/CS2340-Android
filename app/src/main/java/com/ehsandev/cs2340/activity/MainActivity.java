@@ -25,9 +25,11 @@ import com.ehsandev.cs2340.fragment.SourceReportFragment;
 import com.ehsandev.cs2340.model.Response;
 import com.ehsandev.cs2340.model.SourceReport;
 import com.ehsandev.cs2340.task.SourceReportTask;
+import com.ehsandev.cs2340.util.Access;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.IndoorBuilding;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, SourceReportTask.AsyncTaskCompleteListener {
@@ -68,6 +70,12 @@ public class MainActivity extends AppCompatActivity
         fab.setVisibility(View.INVISIBLE);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         onNavigationItemSelected(navigationView.getMenu().getItem(sp.getInt("fragment", 0)));
+        if (!Access.isHigherThanUser(this)){
+            navigationView.getMenu().findItem(R.id.nav_quality).setVisible(false);
+        }
+        if (!Access.isHigherThanWorker(this)){
+            navigationView.getMenu().findItem(R.id.nav_graph).setVisible(false);
+        }
     }
 
     @Override
@@ -120,10 +128,17 @@ public class MainActivity extends AppCompatActivity
             SourceReportFragment sourceFragment = new SourceReportFragment();
             fragmentManager.beginTransaction().replace(R.id.content_frame, sourceFragment).commit();
         } else if (id == R.id.nav_quality) {
-            e.putInt("fragment", 2);
             fab.setVisibility(View.VISIBLE);
-            QualityReportFragment qualityReportFragment = new QualityReportFragment();
-            fragmentManager.beginTransaction().replace(R.id.content_frame, qualityReportFragment).commit();
+            if (Access.isHigherThanWorker(this)){
+                e.putInt("fragment", 2);
+                QualityReportFragment qualityReportFragment = new QualityReportFragment();
+                fragmentManager.beginTransaction().replace(R.id.content_frame, qualityReportFragment).commit();
+            }
+            else {
+                Intent i = new Intent(this, QualityReportCreateActivity.class);
+                startActivity(i);
+            }
+
         } else if (id == R.id.nav_graph) {
             e.putInt("fragment", 3);
             fab.setVisibility(View.INVISIBLE);
@@ -133,6 +148,12 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_logout) {
             fab.setVisibility(View.INVISIBLE);
+            e.remove("cookie");
+            e.remove("level");
+            e.commit();
+            Intent i = new Intent(this, LoginActivity.class);
+            startActivity(i);
+            finish();
         }
         e.commit();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
