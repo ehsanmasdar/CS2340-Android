@@ -1,11 +1,11 @@
 package com.ehsandev.cs2340.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.ehsandev.cs2340.R;
 import com.ehsandev.cs2340.adapters.MarkerAdapter;
@@ -29,7 +30,6 @@ import com.ehsandev.cs2340.util.Access;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.IndoorBuilding;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, SourceReportTask.AsyncTaskCompleteListener {
@@ -73,8 +73,32 @@ public class MainActivity extends AppCompatActivity
         if (!Access.isHigherThanUser(this)){
             navigationView.getMenu().findItem(R.id.nav_quality).setVisible(false);
         }
-        if (!Access.isHigherThanWorker(this)){
+        if (!Access.isHigherThanWorker(this)) {
             navigationView.getMenu().findItem(R.id.nav_graph).setVisible(false);
+        }
+    }
+    @Override
+    public void onResume(){
+        super.onResume();
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        View hView =  navigationView.getHeaderView(0);
+        if (sp.contains("name") && sp.contains("email")){
+            TextView t = (TextView) hView.findViewById(R.id.fullname);
+            TextView e = (TextView) hView.findViewById(R.id.email);
+            t.setText(sp.getString("name", "Unknown Name"));
+            e.setText(sp.getString("email", "Unknown Email"));
+        }
+    }
+    public void updateNavbar(){
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        View hView =  navigationView.getHeaderView(0);
+        if (sp.contains("name") && sp.contains("email")){
+            TextView t = (TextView) hView.findViewById(R.id.fullname);
+            TextView e = (TextView) hView.findViewById(R.id.email);
+            t.setText(sp.getString("name", "Unknown Name"));
+            e.setText(sp.getString("email", "Unknown Email"));
         }
     }
 
@@ -142,14 +166,14 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_graph) {
             e.putInt("fragment", 3);
             fab.setVisibility(View.INVISIBLE);
-
         } else if (id == R.id.nav_profile) {
-            fab.setVisibility(View.INVISIBLE);
-
+            Intent i = new Intent(this, ProfileEditActivity.class);
+            startActivity(i);
         } else if (id == R.id.nav_logout) {
-            fab.setVisibility(View.INVISIBLE);
             e.remove("cookie");
-            e.remove("level");
+            e.remove("fragment");
+            e.remove("name");
+            e.remove("email");
             e.commit();
             Intent i = new Intent(this, LoginActivity.class);
             startActivity(i);

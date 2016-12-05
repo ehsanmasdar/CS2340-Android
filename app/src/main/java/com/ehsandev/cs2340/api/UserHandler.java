@@ -98,7 +98,7 @@ public class UserHandler {
                 JSONObject data = jsonResponse.getJSONObject("data");
                 if (data.has("firstname"))
                     return new Response<>(jsonResponse.getInt("success"), "", new Profile(data.getString("firstname"), data.getString("address"), data.getString("email")));
-                return new Response<>(jsonResponse.getInt("success"), "", new Profile("","",""));
+                return new Response<>(jsonResponse.getInt("success"), "", null);
             }
             else{
                 System.out.println(jsonResponse.getString("message"));
