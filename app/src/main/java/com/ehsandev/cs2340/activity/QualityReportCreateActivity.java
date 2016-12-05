@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -22,6 +23,7 @@ import com.ehsandev.cs2340.model.Response;
 import com.ehsandev.cs2340.model.SourceReport;
 import com.ehsandev.cs2340.task.QualityReportSubmitTask;
 import com.ehsandev.cs2340.task.SourceReportSubmitTask;
+import com.ehsandev.cs2340.util.ErrorThrower;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -147,6 +149,13 @@ public class QualityReportCreateActivity extends AppCompatActivity implements On
         if (s.getSuccess() == 1){
             finish();
         }
+        else {
+            DialogFragment alert = (DialogFragment) ErrorThrower
+                    .newInstance(
+                            s.getMessage(),
+                            false);
+            alert.show(getSupportFragmentManager(), "unexpectederror");
+        }
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -167,11 +176,19 @@ public class QualityReportCreateActivity extends AppCompatActivity implements On
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
             EditText virus = (EditText) findViewById(R.id.qualityReportVirusEdit);
             EditText cont = (EditText) findViewById(R.id.qualityReportContEdit);
-            new QualityReportSubmitTask(this, this, sp.getString("cookie", null)).execute(
-                    new QualityReport("report", loc.latitude, loc.longitude,
-                            conditions.getSelectedItem().toString(),
-                            Integer.parseInt(virus.getText().toString()),
-                            Integer.parseInt(cont.getText().toString())));
+            if (virus.getText().toString().length() > 0 && cont.getText().toString().length() > 0)
+                new QualityReportSubmitTask(this, this, sp.getString("cookie", null)).execute(
+                        new QualityReport("report", loc.latitude, loc.longitude,
+                                conditions.getSelectedItem().toString(),
+                                Integer.parseInt(virus.getText().toString()),
+                                Integer.parseInt(cont.getText().toString())));
+            else {
+                DialogFragment alert = (DialogFragment) ErrorThrower
+                        .newInstance(
+                                "Please fill out all fields",
+                                false);
+                alert.show(getSupportFragmentManager(), "unexpectederror");
+            }
             return true;
         }
 

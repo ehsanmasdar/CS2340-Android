@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -14,6 +15,7 @@ import com.ehsandev.cs2340.R;
 import com.ehsandev.cs2340.model.Response;
 import com.ehsandev.cs2340.model.User;
 import com.ehsandev.cs2340.task.LoginTask;
+import com.ehsandev.cs2340.util.ErrorThrower;
 
 
 public class LoginActivity extends AppCompatActivity implements LoginTask.AsyncTaskCompleteListener{
@@ -39,7 +41,6 @@ public class LoginActivity extends AppCompatActivity implements LoginTask.AsyncT
     public void onRegisterClick(View v) {
         Intent i = new Intent(this, RegisterActivity.class);
         startActivity(i);
-        finish();
     }
     public void login (String username, String password){
         new LoginTask(this, this).execute(new User(username,password));
@@ -56,6 +57,13 @@ public class LoginActivity extends AppCompatActivity implements LoginTask.AsyncT
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             finish();
+        }
+        else {
+            DialogFragment alert = (DialogFragment) ErrorThrower
+                    .newInstance(
+                            r.getMessage(),
+                            false);
+            alert.show(getSupportFragmentManager(), "unexpectederror");
         }
     }
 

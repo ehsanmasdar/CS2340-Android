@@ -3,6 +3,7 @@ package com.ehsandev.cs2340.activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -14,6 +15,7 @@ import com.ehsandev.cs2340.model.Profile;
 import com.ehsandev.cs2340.model.Response;
 import com.ehsandev.cs2340.task.ProfileSubmitTask;
 import com.ehsandev.cs2340.task.ProfileTask;
+import com.ehsandev.cs2340.util.ErrorThrower;
 
 public class ProfileEditActivity extends AppCompatActivity implements ProfileTask.AsyncTaskCompleteListener, ProfileSubmitTask.AsyncTaskCompleteListener {
 
@@ -84,6 +86,13 @@ public class ProfileEditActivity extends AppCompatActivity implements ProfileTas
             e.putString("email", submit.getEmail());
             e.apply();
             finish();
+        }
+        else {
+            DialogFragment alert = (DialogFragment) ErrorThrower
+                    .newInstance(
+                            s.getMessage(),
+                            false);
+            alert.show(getSupportFragmentManager(), "unexpectederror");
         }
     }
 }

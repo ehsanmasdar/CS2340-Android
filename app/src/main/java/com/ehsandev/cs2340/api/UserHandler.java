@@ -47,7 +47,9 @@ public class UserHandler {
                     .field("password", user.getPassword());
             JSONObject jsonResponse = resp.asJson().getBody().getObject();
             HttpResponse response = resp.asString();
-            String cookie = response.getHeaders().getFirst("set-cookie").split(";")[0] + ";";
+            String cookie = "";
+            if (jsonResponse.getInt("success") == 1)
+                cookie = response.getHeaders().getFirst("set-cookie").split(";")[0] + ";";
             if (jsonResponse.has("message")){
                 return new Response<>(jsonResponse.getInt("success"), jsonResponse.getString("message"), cookie);
             }

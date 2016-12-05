@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -19,6 +20,7 @@ import com.ehsandev.cs2340.R;
 import com.ehsandev.cs2340.model.Response;
 import com.ehsandev.cs2340.model.SourceReport;
 import com.ehsandev.cs2340.task.SourceReportSubmitTask;
+import com.ehsandev.cs2340.util.ErrorThrower;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -147,6 +149,13 @@ public class SourceReportCreateActivity extends AppCompatActivity implements OnM
     public void onDone(Response<String> s) {
         if (s.getSuccess() == 1){
             finish();
+        }
+        else {
+            DialogFragment alert = (DialogFragment) ErrorThrower
+                    .newInstance(
+                            s.getMessage(),
+                            false);
+            alert.show(getSupportFragmentManager(), "unexpectederror");
         }
     }
     @Override

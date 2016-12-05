@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -16,6 +17,7 @@ import com.ehsandev.cs2340.R;
 import com.ehsandev.cs2340.model.Response;
 import com.ehsandev.cs2340.model.User;
 import com.ehsandev.cs2340.task.RegisterTask;
+import com.ehsandev.cs2340.util.ErrorThrower;
 
 
 public class RegisterActivity extends AppCompatActivity implements RegisterTask.AsyncTaskCompleteListener{
@@ -53,6 +55,13 @@ public class RegisterActivity extends AppCompatActivity implements RegisterTask.
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             finish();
+        }
+        else {
+            DialogFragment alert = (DialogFragment) ErrorThrower
+                    .newInstance(
+                            r.getMessage(),
+                            false);
+            alert.show(getSupportFragmentManager(), "unexpectederror");
         }
     }
 }
