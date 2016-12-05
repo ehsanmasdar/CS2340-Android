@@ -13,6 +13,22 @@ public class User {
         this.password = password;
         this.level = level;
     }
+    public User(String username, String password, String level) {
+        this.username = username;
+        this.password = password;
+        if (level.equals("admin")){
+            this.level = AccessLevel.ADMIN;
+        }
+        else if (level.equals("manager")){
+            this.level = AccessLevel.MANAGER;
+        }
+        else if (level.equals("worker")){
+            this.level = AccessLevel.WORKER;
+        }
+        else {
+            this.level = AccessLevel.USER;
+        }
+    }
 
     public User(String username, String password) {
         this.username = username;

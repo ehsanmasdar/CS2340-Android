@@ -8,41 +8,38 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.ehsandev.cs2340.R;
 import com.ehsandev.cs2340.model.Response;
 import com.ehsandev.cs2340.model.User;
-import com.ehsandev.cs2340.task.LoginTask;
+import com.ehsandev.cs2340.task.RegisterTask;
 
 
-public class LoginActivity extends AppCompatActivity implements LoginTask.AsyncTaskCompleteListener{
+public class RegisterActivity extends AppCompatActivity implements RegisterTask.AsyncTaskCompleteListener{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(this);
-        if (p.contains("cookie")){
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-            finish();
-        }
+        Spinner s = (Spinner) findViewById(R.id.spinner_access_level);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.levels, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        s.setAdapter(adapter);
+        setTitle("Register");
     }
 
-    public void onLoginClick(View v) {
-        EditText username = (EditText) findViewById((R.id.edittext_login_username));
+    public void onRegisterRealClick (View v){
+        Spinner s = (Spinner) findViewById(R.id.spinner_access_level);
+        EditText username = (EditText) findViewById(R.id.edittext_login_username);
         EditText password = (EditText) findViewById(R.id.edittext_login_password);
-        login(username.getText().toString(), password.getText().toString());
-    }
-    public void onRegisterClick(View v) {
-        Intent i = new Intent(this, RegisterActivity.class);
-        startActivity(i);
-        finish();
-    }
-    public void login (String username, String password){
-        new LoginTask(this, this).execute(new User(username,password));
+        EditText passwordConfirm = (EditText) findViewById(R.id.edittext_login_password_confirm);
+        if (password.getText().toString().equals(passwordConfirm.getText().toString())){
+            new RegisterTask(this,this).execute(new User(username.getText().toString(), password.getText().toString(), (String) s.getSelectedItem().toString().toLowerCase()));
+        }
     }
 
     @Override
@@ -58,5 +55,4 @@ public class LoginActivity extends AppCompatActivity implements LoginTask.AsyncT
             finish();
         }
     }
-
 }

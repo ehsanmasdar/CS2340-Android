@@ -23,4 +23,10 @@
         <item>Virus</item>
         <item>Contaminant</item>
     </string-array>
+    <string-array name="levels" >
+        <item>User</item>
+        <item>Worker</item>
+        <item>Manager</item>
+        <item>Admin</item>
+    </string-array>
 </resources>

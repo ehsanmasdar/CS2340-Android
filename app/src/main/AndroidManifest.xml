@@ -67,6 +67,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MainActivity" />
         </activity>
+        <activity
+            android:name=".activity.RegisterActivity"
+            android:label="@string/title_register"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDdLeoqpSIr4Ob4W1FWdcQO95n_XDsEo_Q"/>
