@@ -40,11 +40,11 @@ public class ProfileEditActivity extends AppCompatActivity implements ProfileTas
         EditText name = (EditText) findViewById(R.id.nameInput);
         EditText email = (EditText) findViewById(R.id.emailInput);
         EditText address = (EditText) findViewById(R.id.addressInput);
-        if (p.getName() != null)
+        if (p != null && p.getName() != null)
             name.setText(p.getName());
-        if (p.getEmail() != null)
+        if (p != null && p.getEmail() != null)
             email.setText(p.getEmail());
-        if (p.getAddress() != null)
+        if (p != null && p.getAddress() != null)
             address.setText(p.getAddress());
     }
     @Override

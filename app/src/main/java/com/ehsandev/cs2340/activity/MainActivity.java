@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.ehsandev.cs2340.R;
 import com.ehsandev.cs2340.adapters.MarkerAdapter;
+import com.ehsandev.cs2340.fragment.GraphFragment;
 import com.ehsandev.cs2340.fragment.QualityReportFragment;
 import com.ehsandev.cs2340.fragment.SourceReportFragment;
 import com.ehsandev.cs2340.model.Response;
@@ -152,6 +153,7 @@ public class MainActivity extends AppCompatActivity
             SourceReportFragment sourceFragment = new SourceReportFragment();
             fragmentManager.beginTransaction().replace(R.id.content_frame, sourceFragment).commit();
         } else if (id == R.id.nav_quality) {
+            setTitle("Quality Reports");
             fab.setVisibility(View.VISIBLE);
             if (Access.isHigherThanWorker(this)){
                 e.putInt("fragment", 2);
@@ -164,8 +166,11 @@ public class MainActivity extends AppCompatActivity
             }
 
         } else if (id == R.id.nav_graph) {
+            setTitle("Historical Graph");
             e.putInt("fragment", 3);
             fab.setVisibility(View.INVISIBLE);
+            GraphFragment graphFragment = new GraphFragment();
+            fragmentManager.beginTransaction().replace(R.id.content_frame, graphFragment).commit();
         } else if (id == R.id.nav_profile) {
             Intent i = new Intent(this, ProfileEditActivity.class);
             startActivity(i);
